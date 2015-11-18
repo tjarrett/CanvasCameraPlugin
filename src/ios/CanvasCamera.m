@@ -68,25 +68,30 @@
     self.session.sessionPreset = AVCaptureSessionPresetPhoto;
 
     self.device = [self cameraWithPosition: _devicePosition];
-    self.input = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:nil];
 
-    self.output = [[AVCaptureVideoDataOutput alloc] init];
-    self.output.videoSettings = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA] forKey:(id)kCVPixelBufferPixelFormatTypeKey];
-
-    queue = dispatch_queue_create("canvas_camera_queue", NULL);
-    [self.output setSampleBufferDelegate:(id)self queue:queue];
-
-    [self.session addInput:self.input];
-    [self.session addOutput:self.output];
-
-    [self.session startRunning];
-
-    bIsStarted = YES;
-
-
-    // success callback
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	self.input = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:nil];
+	if(self.input!=nil){
+	    self.output = [[AVCaptureVideoDataOutput alloc] init];
+	    self.output.videoSettings = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:kCVPixelFormatType_32BGRA] forKey:(id)kCVPixelBufferPixelFormatTypeKey];
+	
+	    queue = dispatch_queue_create("canvas_camera_queue", NULL);
+	    [self.output setSampleBufferDelegate:(id)self queue:queue];
+	
+	    [self.session addInput:self.input];
+	    [self.session addOutput:self.output];
+	
+	    [self.session startRunning];
+	
+	    bIsStarted = YES;
+	
+	
+	    // success callback
+	    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
+	    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Could not get camera"];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
 }
 
 - (void)stopCapture:(CDVInvokedUrlCommand *)command

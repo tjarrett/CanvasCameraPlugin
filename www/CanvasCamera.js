@@ -23,9 +23,12 @@ CanvasCamera.prototype.initialize = function(obj) {
     }.bind(this);
 };
 
+CanvasCamera.prototype.handleError=function(err){
+	alert(err);	
+};
 
 CanvasCamera.prototype.start = function(options) {
-    cordova.exec(this.capture.bind(this), false, "CanvasCamera", "startCapture", [options]);
+    cordova.exec(this.capture.bind(this), this.handleError.bind(this), "CanvasCamera", "startCapture", [options]);
 };
 
 CanvasCamera.prototype.stop = function() {
