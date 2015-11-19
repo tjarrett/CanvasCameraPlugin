@@ -49,7 +49,7 @@ CanvasCamera.prototype.setFlashMode = function(flashMode) {
 CanvasCamera.prototype.setCameraPosition = function(cameraPosition) {
     cordova.exec(function(){
         this._cameraPosition = cameraPosition;
-    }.bind(this), function(){}, "CanvasCamera", "setCameraPosition", [cameraPosition]);
+    }.bind(this), this.handleError.bind(this), "CanvasCamera", "setCameraPosition", [cameraPosition]);
 };
 
 CanvasCamera.prototype.drawImage = function() {

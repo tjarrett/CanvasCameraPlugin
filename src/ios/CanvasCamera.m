@@ -228,38 +228,45 @@
         if(self.session)
         {
             //Remove existing input
-            AVCaptureInput* currentCameraInput = [self.session.inputs objectAtIndex:0];
-            if(((AVCaptureDeviceInput*)currentCameraInput).device.position != _devicePosition)
-            {
-                //Indicate that some changes will be made to the session
-                [self.session beginConfiguration];
-
-                //Remove existing input
-                AVCaptureInput* currentCameraInput = [self.session.inputs objectAtIndex:0];
-                [self.session removeInput:currentCameraInput];
-
-                //Get new input
-                AVCaptureDevice *newCamera = nil;
-
-                newCamera = [self cameraWithPosition:_devicePosition];
-
-                //Add input to session
-                AVCaptureDeviceInput *newVideoInput = [[AVCaptureDeviceInput alloc] initWithDevice:newCamera error:nil];
-                [self.session addInput:newVideoInput];
-
-                //Commit all the configuration changes at once
-                [self.session commitConfiguration];
-
-                // success callback
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            if(self.session.inputs != nil && [self.session.inputs count] > 0){
+	            AVCaptureInput* currentCameraInput = [self.session.inputs objectAtIndex:0];
+	            if(((AVCaptureDeviceInput*)currentCameraInput).device.position != _devicePosition)
+	            {
+	                //Indicate that some changes will be made to the session
+	                [self.session beginConfiguration];
+	
+	                //Remove existing input
+	                AVCaptureInput* currentCameraInput = [self.session.inputs objectAtIndex:0];
+	                [self.session removeInput:currentCameraInput];
+	
+	                //Get new input
+	                AVCaptureDevice *newCamera = nil;
+	
+	                newCamera = [self cameraWithPosition:_devicePosition];
+	
+	                //Add input to session
+	                AVCaptureDeviceInput *newVideoInput = [[AVCaptureDeviceInput alloc] initWithDevice:newCamera error:nil];
+	                [self.session addInput:newVideoInput];
+	
+	                //Commit all the configuration changes at once
+	                [self.session commitConfiguration];
+	
+	                // success callback
+	                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
+	                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	            }
+	            else
+	            {
+	                // success callback
+	                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
+	                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	            }
+            } else {
+	            errMsg = @"Could not get camera";
+				pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errMsg];
+				[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             }
-            else
-            {
-                // success callback
-                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-            }
+            
 
 
         }
